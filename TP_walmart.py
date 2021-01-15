@@ -78,3 +78,16 @@ print((df.filter("High > 80").count()/df.count())*100)
 #sql
 spark.sql("SELECT (SELECT COUNT(High) FROM df_sql WHERE High > 80) / COUNT(High) * 100 as Pourcentage FROM df_sql").show()
 
+# 11) Maximum de High par an
+#python
+df.groupBy(year("Date").alias("Annee")).agg(max("High").alias("Max_High")).orderBy("Annee").show()
+
+#sql
+spark.sql("SELECT MAX(High) as Maximum_High, YEAR(Date) as Annee FROM df_sql GROUP BY YEAR(Date) ORDER BY Annee").show()
+
+# 12) Moyenne Close pour chaque mois de chaque annee
+#python
+df.groupBy(year("Date").alias("Annee"), month("Date").alias("Mois")).agg(avg("Close").alias("Moyenne_Close")).orderBy("Annee", "Mois").show()
+
+#sql
+spark.sql("SELECT YEAR(Date) as Annee, MONTH(Date) as Mois, AVG(Close) as Moyenne_Close FROM df_sql GROUP BY YEAR(Date), MONTH(Date) ORDER BY Annee, Mois").show()
